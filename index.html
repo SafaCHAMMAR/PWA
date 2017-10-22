@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <title>Basic BackgroundSync Example</title>
+ </head>
+ <body>
+   <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
+   <p>Click on the button below to make an HTTP request.<p>
+<!--   <button id="requestButton">Make an HTTP request - do it!</button>-->
+<input type="text" id="name" placeholder="Name"><br/>
+<input type="email" id="email" placeholder="Email"><br/>
+<button id="addButton">Add Data</button>
+	<script>
+
+  // Connection Status
+  function isOnline() {
+    var connectionStatus = document.getElementById('connectionStatus');
+
+    if (navigator.onLine){
+      connectionStatus.innerHTML = 'You are currently online!';
+    }
+    else{
+      connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+    }
+  }
+
+  window.addEventListener('online', isOnline);
+  window.addEventListener('offline', isOnline);
+  isOnline();
+  var db;
+
+  function indexedDBOk() {
+      return "indexedDB" in window;
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+
+      //No support? Go in the corner and pout.
+
+      if(!indexedDBOk) return;
+
+      var openRequest = indexedDB.open("database3",1);
+
+      openRequest.onupgradeneeded = function(e) {
+          var thisDB = e.target.result;
+
+
+          if(!thisDB.objectStoreNames.contains("people")) {
+              thisDB.createObjectStore("people");
+          }
+      }
+      openRequest.onsuccess = function(e) {
+          console.log("running onsuccess");
+
+          db = e.target.result;
+
+          //Listen for add clicks
+          document.querySelector("#addButton").addEventListener("click", addPerson, false);
+      }
+
+      openRequest.onerror = function(e) {
+          //Do something for the error
+      }
+
+  },false);
+
+    // Service Worker code
+    if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('service-worker.js').then((registration) => {
+          return navigator.serviceWorker.ready;
+        }).then((registration) => {
+          registration.sync.register('outbox').then(() => {
+            console.log('sync registered');
+          }).catch(function(error){
+            console.log('Unable to fetch image.');
+          });
+          openRequest.onsuccess = function(e) {
+              console.log("running onsuccess");
+
+              db = e.target.result;
+
+              //Listen for add clicks
+              document.querySelector("#addButton").addEventListener("click", addPerson, false);
+          }
+
+
+      }).catch(function(error){
+        console.log('Unable to register Service Worker.');
+      });
+    }
+    else{
+      console.log('Service Worker functionality not supported.');
+    }
+
+
+    function addPerson(e) {
+      // register sync
+
+        var name = document.querySelector("#name").value;
+        var email = document.querySelector("#email").value;
+
+        console.log("About to add "+name+"/"+email);
+
+        var transaction = db.transaction(["people"],"readwrite");
+        var store = transaction.objectStore("people");
+
+        //Define a person
+        var person = {
+            name:name,
+            email:email,
+            created:new Date()
+        }
+
+        //Perform the add
+        var request = store.add(person,1);
+
+        request.onerror = function(e) {
+            console.log("Error",e.target.error.name);
+            //some type of error handler
+        }
+
+        request.onsuccess = function(e) {
+            console.log("Woot! Did it");
+        }
+    }
+
+	</script>
+  </body>
+</html>

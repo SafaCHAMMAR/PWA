@@ -76,8 +76,6 @@
           //Listen for add clicks
           document.querySelector("#addButton").addEventListener("click",function(){
             addPerson();
-		
-	// register sync
             registration.sync.register('outbox').then(() => {
               console.log('sync registered');
             }).catch(function(error){
@@ -103,7 +101,8 @@
 
 
     function addPerson(e) {
-      
+      // register sync
+
         var name = document.querySelector("#name").value;
         var email = document.querySelector("#email").value;
 

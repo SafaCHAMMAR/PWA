@@ -17,23 +17,36 @@ self.addEventListener('sync', function(event) {
     //console.log(document.getElementById('name').value);
     //alert("hello connection");
     console.log('sync event fired');
-    event.waitUntil(fetchDogImage());
+    event.waitUntil(fetchRslt());
   }
 });
 
-function fetchDogImage()
+function fetchRslt()
 {
   console.log('firing: doSomeStuff()');
-  fetch('./doge.png')
-    .then(function(response) {
-      //console.log('response:',response);
-      return response;
-    })
-    .then(function(text) {
-    //  console.log(text);
-      console.log('Request successful', text);
-    })
-    .catch(function(error) {
-      console.log('Request failed', error);
-    });
+var openRequest = indexedDB.open("l8",1);
+
+
+openRequest.onsuccess = function(e) {
+    console.log("running onsuccess");
+    db = e.target.result;
+    var transaction = db.transaction(["students"], "readonly");
+    var objectStore = transaction.objectStore("students");
+
+    var cursor = objectStore.openCursor();
+
+    cursor.onsuccess = function(e) {
+    var res = e.target.result;
+    if(res) {
+        console.log("Key", res.key);
+        console.log("Data", res.value);
+        console.log(JSON.stringify(res.value));
+        res.continue();
+    }
 }
+}
+openRequest.onerror = function(e) {
+    //Do something for the error
+}
+}
+

@@ -24,7 +24,7 @@ self.addEventListener('sync', function(event) {
 function fetchRslt()
 {
   console.log('firing: doSomeStuff()');
-var openRequest = indexedDB.open("l8",1);
+var openRequest = indexedDB.open("l11",1);
 
 
 openRequest.onsuccess = function(e) {
@@ -37,6 +37,7 @@ openRequest.onsuccess = function(e) {
 
     cursor.onsuccess = function(e) {
     var res = e.target.result;
+//console.log(res);
     if(res) {
         console.log("Key", res.key);
         console.log("Data", res.value);

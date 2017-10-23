@@ -3,15 +3,55 @@
  <head>
   <meta charset="UTF-8">
   <title>Basic BackgroundSync Example</title>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700|Lato:400,100,300,700,900' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Custom Stylesheet -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
  </head>
  <body>
-   <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
-   <p>Click on the button below to make an HTTP request.<p>
+
+<div class="container">
+		<div class="top">
+			<h1 id="title" class="hidden">
+<span id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</span>
+	<!--<span id="logo">Daily <span>UI</span></span>--></h1>
+		</div>
+		<div class="login-box animated fadeInUp">
+			<div class="box-header">
+<!--<h2 id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</h2>
+			-->	
+			</div>
+			<label for="username">Name</label>
+			<br/>
+			<input type="text" id="name">
+			<br/>
+			<label for="email">Email</label>
+			<br/>
+			<input type="email" id="email">
+			<br/>
+			<button id="addButton">Submit</button>
+			<br/>
+			
+		</div>
+	</div>
+
+
+  <!-- <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
+  <p>Click on the button below to make an HTTP request.<p>-->
 <!--   <button id="requestButton">Make an HTTP request - do it!</button>-->
-<input type="text" id="name" placeholder="Name"><br/>
+<!--<input type="text" id="name" placeholder="Name"><br/>
 <input type="email" id="email" placeholder="Email"><br/>
-<button id="addButton">Add Data</button>
+<button id="addButton">Add Data</button>-->
+
+
+
+
+
 	<script>
+
   /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
     var d="idarticle_people";
     console.log(d);
@@ -62,11 +102,12 @@
               }).then((registration) => {
                 if(!indexedDBOk) return;
 
-                var openRequest = indexedDB.open("l10",1);
+                var openRequest = indexedDB.open("l13",1);
 
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;
-
+		
+		//thisDB.createObjectStore("students", {autoIncrement:true});
 
                     if(!thisDB.objectStoreNames.contains("students")) {
                         thisDB.createObjectStore("students");

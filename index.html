@@ -12,6 +12,19 @@
 <input type="email" id="email" placeholder="Email"><br/>
 <button id="addButton">Add Data</button>
 	<script>
+  /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
+    var d="idarticle_people";
+    console.log(d);
+
+  var DBDeleteRequest = window.indexedDB.deleteDatabase(d);
+      DBDeleteRequest.onerror = function(event) {
+        console.log("Erreur lors de la suppression de la base");
+      };
+      DBDeleteRequest.onsuccess = function(event) {
+        console.log("Suppression de la base réussie");
+        console.log(event.result); // undefined
+      };
+   }*/
 
   // Connection Status
   function isOnline() {
@@ -39,23 +52,44 @@
 
       if(!indexedDBOk) return;
 
-      var openRequest = indexedDB.open("database3",1);
+      var openRequest = indexedDB.open("l6",1);
 
       openRequest.onupgradeneeded = function(e) {
           var thisDB = e.target.result;
 
 
-          if(!thisDB.objectStoreNames.contains("people")) {
-              thisDB.createObjectStore("people");
+          if(!thisDB.objectStoreNames.contains("students")) {
+              thisDB.createObjectStore("students");
           }
       }
+
+
       openRequest.onsuccess = function(e) {
           console.log("running onsuccess");
-
           db = e.target.result;
-
+          if ('serviceWorker' in navigator) {
+            console.log("serviceWorker in navigator");
+                navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+                  console.log("succes enregistrement");
+                return navigator.serviceWorker.ready;
+              }).then((registration) => {
           //Listen for add clicks
-          document.querySelector("#addButton").addEventListener("click", addPerson, false);
+          document.querySelector("#addButton").addEventListener("click",function(){
+            addPerson();
+            registration.sync.register('outbox').then(() => {
+              console.log('sync registered');
+            }).catch(function(error){
+              console.log('Unable to fetch image.');
+            });
+          },false)
+
+        }).catch(function(error){
+          console.log('Unable to register Service Worker.');
+        });
+    }
+    else{
+      console.log('Service Worker functionality not supported.');
+    }
       }
 
       openRequest.onerror = function(e) {
@@ -64,33 +98,6 @@
 
   },false);
 
-    // Service Worker code
-    if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('service-worker.js').then((registration) => {
-          return navigator.serviceWorker.ready;
-        }).then((registration) => {
-          registration.sync.register('outbox').then(() => {
-            console.log('sync registered');
-          }).catch(function(error){
-            console.log('Unable to fetch image.');
-          });
-          openRequest.onsuccess = function(e) {
-              console.log("running onsuccess");
-
-              db = e.target.result;
-
-              //Listen for add clicks
-              document.querySelector("#addButton").addEventListener("click", addPerson, false);
-          }
-
-
-      }).catch(function(error){
-        console.log('Unable to register Service Worker.');
-      });
-    }
-    else{
-      console.log('Service Worker functionality not supported.');
-    }
 
 
     function addPerson(e) {
@@ -101,14 +108,14 @@
 
         console.log("About to add "+name+"/"+email);
 
-        var transaction = db.transaction(["people"],"readwrite");
-        var store = transaction.objectStore("people");
+        var transaction = db.transaction(["students"],"readwrite");
+        var store = transaction.objectStore("students");
 
         //Define a person
         var person = {
             name:name,
             email:email,
-            created:new Date()
+            //created:new Date()
         }
 
         //Perform the add
@@ -122,7 +129,11 @@
         request.onsuccess = function(e) {
             console.log("Woot! Did it");
         }
+
+
     }
+
+
 
 	</script>
   </body>

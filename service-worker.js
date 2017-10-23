@@ -11,10 +11,11 @@ self.addEventListener('activate', function(event) {
 
 
 self.addEventListener('sync', function(event) {
+  console.log("event sync");
   console.log('firing: sync');
-  if (event.tag == 'outbox'/*'image-fetch'/*'formulaire'*/) {
+  if (event.tag == 'outbox') {
     //console.log(document.getElementById('name').value);
-    alert("hello connection");
+    //alert("hello connection");
     console.log('sync event fired');
     event.waitUntil(fetchDogImage());
   }

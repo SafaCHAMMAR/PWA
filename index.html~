@@ -46,33 +46,37 @@
   function indexedDBOk() {
       return "indexedDB" in window;
   }
-  document.addEventListener("DOMContentLoaded", function() {
+  //document.addEventListener("DOMContentLoaded", function() {
 
       //No support? Go in the corner and pout.
 
-      if(!indexedDBOk) return;
-
-      var openRequest = indexedDB.open("l8",1);
-
-      openRequest.onupgradeneeded = function(e) {
-          var thisDB = e.target.result;
 
 
-          if(!thisDB.objectStoreNames.contains("students")) {
-              thisDB.createObjectStore("students");
-          }
-      }
 
-
-      openRequest.onsuccess = function(e) {
-          console.log("running onsuccess");
-          db = e.target.result;
           if ('serviceWorker' in navigator) {
             console.log("serviceWorker in navigator");
                 navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+		// register sync
                   console.log("succes enregistrement");
                 return navigator.serviceWorker.ready;
               }).then((registration) => {
+                if(!indexedDBOk) return;
+
+                var openRequest = indexedDB.open("l10",1);
+
+                openRequest.onupgradeneeded = function(e) {
+                    var thisDB = e.target.result;
+
+
+                    if(!thisDB.objectStoreNames.contains("students")) {
+                        thisDB.createObjectStore("students");
+                    }
+                }
+                openRequest.onsuccess = function(e) {
+                    console.log("running onsuccess");
+                    db = e.target.result;
+
+
           //Listen for add clicks
           document.querySelector("#addButton").addEventListener("click",function(){
             addPerson();
@@ -82,6 +86,12 @@
               console.log('Unable to fetch image.');
             });
           },false)
+        }
+        openRequest.onerror = function(e) {
+            //Do something for the error
+        }
+
+
 
         }).catch(function(error){
           console.log('Unable to register Service Worker.');
@@ -90,18 +100,15 @@
     else{
       console.log('Service Worker functionality not supported.');
     }
-      }
+      //}
 
-      openRequest.onerror = function(e) {
-          //Do something for the error
-      }
 
-  },false);
+  //},false);
 
 
 
     function addPerson(e) {
-      // register sync
+      
 
         var name = document.querySelector("#name").value;
         var email = document.querySelector("#email").value;

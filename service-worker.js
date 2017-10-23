@@ -24,7 +24,7 @@ self.addEventListener('sync', function(event) {
 function fetchRslt()
 {
   console.log('firing: doSomeStuff()');
-var openRequest = indexedDB.open("l11",1);
+var openRequest = indexedDB.open("l14",1);
 
 
 openRequest.onsuccess = function(e) {
@@ -40,10 +40,29 @@ openRequest.onsuccess = function(e) {
 //console.log(res);
     if(res) {
         console.log("Key", res.key);
+	console.log("id",res.id);
         console.log("Data", res.value);
         console.log(JSON.stringify(res.value));
         res.continue();
-    }
+    
+//envoyer puis supprimer les données
+
+	/*fetch("hostURL", {
+        method: 'POST',
+        headers: { 'Accept': 'application/json','Content-Type': 'application/json',},
+        body: JSON.stringify(res.value)
+    }).then((response) => response.json())
+    .then((responseData) => {
+        console.log(responseData);
+	if (responseData.result === 'success') {
+		var transaction = db.transaction(["students"],"readwrite");
+        var store = transaction.objectStore("students");
+	return store.delete(1);}
+    }).catch((error) => {
+        console.log("Error");
+    });*/
+	
+}
 }
 }
 openRequest.onerror = function(e) {

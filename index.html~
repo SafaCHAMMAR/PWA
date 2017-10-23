@@ -52,6 +52,8 @@
 
 	<script>
 
+
+
   /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
     var d="idarticle_people";
     console.log(d);
@@ -102,12 +104,12 @@
               }).then((registration) => {
                 if(!indexedDBOk) return;
 
-                var openRequest = indexedDB.open("l12",1);
+                var openRequest = indexedDB.open("l13",1);
 
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;
 		
-		thisDB.createObjectStore("students", {autoIncrement:true});
+		//thisDB.createObjectStore("students", {autoIncrement:true});
 
                     if(!thisDB.objectStoreNames.contains("students")) {
                         thisDB.createObjectStore("students");
@@ -167,7 +169,7 @@
         }
 
         //Perform the add
-        var request = store.add(person);
+        var request = store.add(person,1);
 
         request.onerror = function(e) {
             console.log("Error",e.target.error.name);

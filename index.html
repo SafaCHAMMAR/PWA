@@ -52,6 +52,8 @@
 
 	<script>
 
+
+
   /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
     var d="idarticle_people";
     console.log(d);
@@ -102,7 +104,7 @@
               }).then((registration) => {
                 if(!indexedDBOk) return;
 
-                var openRequest = indexedDB.open("l13",1);
+                var openRequest = indexedDB.open("l14",1);
 
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;

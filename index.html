@@ -8,11 +8,11 @@
 	<link rel="stylesheet" href="css/animate.css">
 	<!-- Custom Stylesheet -->
 	<link rel="stylesheet" href="css/style.css">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="dist/localforage.js"></script>
  </head>
  <body>
-
+<form enctype="multipart/form-data">
 <div class="container">
 		<div class="top">
 			<h1 id="title" class="hidden">
@@ -22,7 +22,7 @@
 		<div class="login-box animated fadeInUp">
 			<div class="box-header">
 <!--<h2 id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</h2>
-			-->	
+			-->
 			</div>
 			<label for="username">Name</label>
 			<br/>
@@ -32,32 +32,26 @@
 			<br/>
 			<input type="email" id="email">
 			<br/>
+      <label for="file">File</label>
+			<br/>
+			<input type="file" id="file">
+			<br/>
+
 			<button id="addButton">Submit</button>
 			<br/>
-			
+
 		</div>
-	</div>
-
-
-  <!-- <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
+	</div></form>
+<!-- <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
   <p>Click on the button below to make an HTTP request.<p>-->
 <!--   <button id="requestButton">Make an HTTP request - do it!</button>-->
 <!--<input type="text" id="name" placeholder="Name"><br/>
 <input type="email" id="email" placeholder="Email"><br/>
 <button id="addButton">Add Data</button>-->
-
-
-
-
-
-	<script>
-
-
-
-  /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
-    var d="idarticle_people";
+<script>
+/*for (var i in {1:1,2:3,3:4,4:6,14:7,10:8}){
+    var d="db"+i;
     console.log(d);
-
   var DBDeleteRequest = window.indexedDB.deleteDatabase(d);
       DBDeleteRequest.onerror = function(event) {
         console.log("Erreur lors de la suppression de la base");
@@ -67,16 +61,15 @@
         console.log(event.result); // undefined
       };
    }*/
-
-  // Connection Status
+// Connection Status
   function isOnline() {
     var connectionStatus = document.getElementById('connectionStatus');
 
     if (navigator.onLine){
-      connectionStatus.innerHTML = 'You are currently online!';
+      connectionStatus.innerHTML = 'Vous êtes actuellement en ligne!';
     }
     else{
-      connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+      connectionStatus.innerHTML = 'Vous êtes actuellement hors connexion. Toutes les demandes seront mises en file d\'attente et synchronisées dès que vous serez à nouveau connecté';
     }
   }
 
@@ -90,31 +83,24 @@
   }
   //document.addEventListener("DOMContentLoaded", function() {
 
-      //No support? Go in the corner and pout.
-
-
-
-
-          if ('serviceWorker' in navigator) {
-            console.log("serviceWorker in navigator");
+  if ('serviceWorker' in navigator) {
+            console.log("serviceWorker in navigator = ",'serviceWorker' in navigator);
                 navigator.serviceWorker.register('/service-worker.js').then((registration) => {
-		// register sync
-                  console.log("succes enregistrement");
+		                //console.log("succes enregistrement");
                 return navigator.serviceWorker.ready;
               }).then((registration) => {
+                // register sync
                 if(!indexedDBOk) return;
 
-                var openRequest = indexedDB.open("l14",1);
+                var openRequest = indexedDB.open("db1",1);
 
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;
-		
-		//thisDB.createObjectStore("students", {autoIncrement:true});
-
-                    if(!thisDB.objectStoreNames.contains("students")) {
+		                  //thisDB.createObjectStore("students", {autoIncrement:true});
+                      if(!thisDB.objectStoreNames.contains("students")) {
                         thisDB.createObjectStore("students");
-                    }
-                }
+                        }
+                  }
                 openRequest.onsuccess = function(e) {
                     console.log("running onsuccess");
                     db = e.target.result;
@@ -151,20 +137,43 @@
 
 
     function addPerson(e) {
-      
+
 
         var name = document.querySelector("#name").value;
         var email = document.querySelector("#email").value;
+        /*var file=document.querySelector("#file").files;
+        console.log("file",file);*/
+      var fileInput = document.querySelector('#file');
+       var file=fileInput.files[0];
+       alert("file.type= "+file.type);
+      /* mb = new Blob([file],{type:file.type});*/
 
+      //  alert("fileInput  ="+ typeof(fileInput.files[0]));
+
+    /*fileInput.addEventListener('change', function() {*/
+
+       //var reader = new FileReader();
+
+       //reader.addEventListener('load', function() {
+
+        //    alert('Contenu du fichier "' + fileInput.files[0].name + '" :\n\n'); //+ reader.readAsText());
+      //});
+
+        //reader.readAsText(fileInput.files[0]);
+
+   //});
         console.log("About to add "+name+"/"+email);
 
         var transaction = db.transaction(["students"],"readwrite");
         var store = transaction.objectStore("students");
-
+      /*  localforage.setItem("file", mb, function(err, value){
+        console.log(err);
+      });*/
         //Define a person
         var person = {
             name:name,
             email:email,
+            file:file,
             //created:new Date()
         }
 
@@ -188,4 +197,3 @@
 	</script>
   </body>
 </html>
-

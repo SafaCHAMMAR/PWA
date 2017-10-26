@@ -54,8 +54,8 @@
 
 
 
-  /*for (var i in {1:1,2:3,3:4,4:6,5:7,6:8}){
-    var d="idarticle_people";
+  /*for (var i in {1:1,2:3,3:4,4:6,14:7,10:8}){
+    var d="l"+i;
     console.log(d);
 
   var DBDeleteRequest = window.indexedDB.deleteDatabase(d);
@@ -73,10 +73,10 @@
     var connectionStatus = document.getElementById('connectionStatus');
 
     if (navigator.onLine){
-      connectionStatus.innerHTML = 'You are currently online!';
+      connectionStatus.innerHTML = 'Vous êtes actuellement en ligne!';
     }
     else{
-      connectionStatus.innerHTML = 'You are currently offline. Any requests made will be queued and synced as soon as you are connected again.';
+      connectionStatus.innerHTML = 'Vous êtes actuellement hors connexion. Toutes les demandes seront mises en file d\'attente et synchronisées dès que vous serez à nouveau connecté';
     }
   }
 
@@ -104,7 +104,7 @@
               }).then((registration) => {
                 if(!indexedDBOk) return;
 
-                var openRequest = indexedDB.open("l13",1);
+                var openRequest = indexedDB.open("db",1);
 
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;

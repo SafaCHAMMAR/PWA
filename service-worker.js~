@@ -24,7 +24,7 @@ self.addEventListener('sync', function(event) {
 function fetchRslt()
 {
   console.log('firing: doSomeStuff()');
-var openRequest = indexedDB.open("l14",1);
+var openRequest = indexedDB.open("db1",1);
 
 
 openRequest.onsuccess = function(e) {
@@ -44,8 +44,10 @@ openRequest.onsuccess = function(e) {
         console.log("Data", res.value);
         console.log(JSON.stringify(res.value));
         res.continue();
-    //}
-	fetch("hostURL", {
+    
+//envoyer puis supprimer les données
+
+	/*fetch("hostURL", {
         method: 'POST',
         headers: { 'Accept': 'application/json','Content-Type': 'application/json',},
         body: JSON.stringify(res.value)
@@ -58,7 +60,7 @@ openRequest.onsuccess = function(e) {
 	return store.delete(1);}
     }).catch((error) => {
         console.log("Error");
-    });
+    });*/
 	
 }
 }

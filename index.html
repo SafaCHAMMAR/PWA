@@ -9,7 +9,7 @@
 	<!-- Custom Stylesheet -->
 	<link rel="stylesheet" href="css/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="dist/localforage.js"></script>
+  <!--<script src="dist/localforage.js"></script>-->
  </head>
  <body>
 <form enctype="multipart/form-data">
@@ -42,12 +42,6 @@
 
 		</div>
 	</div></form>
-<!-- <div id="connectionStatus">You are currently offline. Any requests made will be queued and synced as soon as you are connected again.</div>
-  <p>Click on the button below to make an HTTP request.<p>-->
-<!--   <button id="requestButton">Make an HTTP request - do it!</button>-->
-<!--<input type="text" id="name" placeholder="Name"><br/>
-<input type="email" id="email" placeholder="Email"><br/>
-<button id="addButton">Add Data</button>-->
 <script>
 /*for (var i in {1:1,2:3,3:4,4:6,14:7,10:8}){
     var d="db"+i;
@@ -85,25 +79,28 @@
 
   if ('serviceWorker' in navigator) {
             console.log("serviceWorker in navigator = ",'serviceWorker' in navigator);
-                navigator.serviceWorker.register('/service-worker.js').then((registration) => {
-		                //console.log("succes enregistrement");
+                navigator.serviceWorker.register('service-worker.js').then((registration) => {
                 return navigator.serviceWorker.ready;
               }).then((registration) => {
-                // register sync
+
+                registration.sync.register('outbox').then(() => {
+                  console.log('sync enregistrée');
+                }).catch(function(error){
+                  console.log('Unable to fetch url.');
+                });
+
                 if(!indexedDBOk) return;
-
                 var openRequest = indexedDB.open("db1",1);
-
                 openRequest.onupgradeneeded = function(e) {
                     var thisDB = e.target.result;
-		                  //thisDB.createObjectStore("students", {autoIncrement:true});
-                      if(!thisDB.objectStoreNames.contains("students")) {
-                        thisDB.createObjectStore("students");
+                      if(!thisDB.objectStoreNames.contains("students1")) {
+                        thisDB.createObjectStore("students1");
                         }
-                  }
+                      }
                 openRequest.onsuccess = function(e) {
-                    console.log("running onsuccess");
+                    console.log("creation de db1");
                     db = e.target.result;
+                    // register sync
 
 
           //Listen for add clicks
@@ -145,30 +142,10 @@
         console.log("file",file);*/
       var fileInput = document.querySelector('#file');
        var file=fileInput.files[0];
-       alert("file.type= "+file.type);
-      /* mb = new Blob([file],{type:file.type});*/
-
-      //  alert("fileInput  ="+ typeof(fileInput.files[0]));
-
-    /*fileInput.addEventListener('change', function() {*/
-
-       //var reader = new FileReader();
-
-       //reader.addEventListener('load', function() {
-
-        //    alert('Contenu du fichier "' + fileInput.files[0].name + '" :\n\n'); //+ reader.readAsText());
-      //});
-
-        //reader.readAsText(fileInput.files[0]);
-
-   //});
         console.log("About to add "+name+"/"+email);
 
-        var transaction = db.transaction(["students"],"readwrite");
-        var store = transaction.objectStore("students");
-      /*  localforage.setItem("file", mb, function(err, value){
-        console.log(err);
-      });*/
+        var transaction = db.transaction(["students1"],"readwrite");
+        var store = transaction.objectStore("students1");
         //Define a person
         var person = {
             name:name,
@@ -186,8 +163,19 @@
         }
 
         request.onsuccess = function(e) {
-            console.log("Woot! Did it");
+            console.log("succes d'insertion des données");
+            console.log(request);
+            var cursor = store.openCursor();
+
+            cursor.onsuccess = function(e) {
+            var res = e.target.result;
+        //console.log("res",res);
+            if(res) {
+                console.log("Key", res.key);
+        	//console.log("id",res.id);
+                console.log("Data", res.value);}
         }
+      }
 
 
     }
